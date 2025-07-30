@@ -1,8 +1,7 @@
 // Global state management
-let currentUser = null
-let mentors = []
-let mentorshipRequests = []
+let currentUser = null;
 
+// --- MOCK DATA ---
 // Sample data for demonstration
 const sampleMentors = [
   {
@@ -123,452 +122,224 @@ const sampleRequests = [
     requestDate: "2024-01-13",
   },
 ]
+// --- END MOCK DATA ---
+
 
 // Initialize the application
 document.addEventListener("DOMContentLoaded", () => {
-  initializeApp()
-  setupEventListeners()
-  loadSampleData()
-})
+  initializeApp();
+  setupEventListeners();
+});
 
 function initializeApp() {
-  // Check if user is logged in (in real app, check localStorage/sessionStorage)
-  const savedUser = localStorage.getItem("currentUser")
-  if (savedUser) {
-    currentUser = JSON.parse(savedUser)
-    showDashboard()
-  } else {
-    showAuthPage()
-  }
-}
+  const userElement = document.body;
+  const userDataString = userElement.dataset.user;
 
-function loadSampleData() {
-  mentors = [...sampleMentors]
-  mentorshipRequests = [...sampleRequests]
+  if (userDataString) {
+    try {
+      currentUser = JSON.parse(userDataString);
+      showDashboard();
+    } catch (e) {
+      console.error("Failed to parse user data:", e);
+      // If parsing fails, the user is not properly logged in.
+      window.location.href = '/login';
+    }
+  } else {
+    // This is a fallback. If no user data, the user isn't logged in.
+    // The backend's @login_required should prevent this page from loading anyway.
+    window.location.href = '/login';
+  }
 }
 
 function setupEventListeners() {
-  // Auth tab switching
-  document.getElementById("loginTab").addEventListener("click", () => switchAuthTab("login"))
-  document.getElementById("signupTab").addEventListener("click", () => switchAuthTab("signup"))
+  // Navigation
+  document.getElementById("dashboardBtn").addEventListener("click", showDashboard);
+  document.getElementById("logoutBtn").addEventListener("click", () => {
+    // Redirect to the backend logout route
+    window.location.href = '/logout';
+  });
 
   // Form submissions
-  document.getElementById("loginFormElement").addEventListener("submit", handleLogin)
-  document.getElementById("signupFormElement").addEventListener("submit", handleSignup)
-  document.getElementById("requestForm").addEventListener("submit", handleMentorshipRequest)
-
-  // Navigation
-  document.getElementById("dashboardBtn").addEventListener("click", showDashboard)
-  document.getElementById("logoutBtn").addEventListener("click", handleLogout)
+  document.getElementById("requestForm").addEventListener("submit", handleMentorshipRequest);
 
   // Search and filters
-  document.getElementById("mentorSearch").addEventListener("input", filterMentors)
-  document.getElementById("departmentFilter").addEventListener("change", filterMentors)
-  document.getElementById("yearFilter").addEventListener("change", filterMentors)
+  document.getElementById("mentorSearch").addEventListener("input", filterMentors);
+  document.getElementById("departmentFilter").addEventListener("change", filterMentors);
+  document.getElementById("yearFilter").addEventListener("change", filterMentors);
 
   // Modal controls
-  document.getElementById("closeModal").addEventListener("click", closeModal)
-  document.getElementById("cancelRequest").addEventListener("click", closeModal)
-
-  // Availability toggle
-  document.getElementById("availabilityToggle").addEventListener("change", toggleAvailability)
-
-  // Close modal when clicking outside
+  document.getElementById("closeModal").addEventListener("click", closeModal);
+  document.getElementById("cancelRequest").addEventListener("click", closeModal);
   document.getElementById("requestModal").addEventListener("click", function (e) {
-    if (e.target === this) {
-      closeModal()
-    }
-  })
-}
+    if (e.target === this) closeModal();
+  });
 
-function switchAuthTab(tab) {
-  const loginTab = document.getElementById("loginTab")
-  const signupTab = document.getElementById("signupTab")
-  const loginForm = document.getElementById("loginForm")
-  const signupForm = document.getElementById("signupForm")
-
-  if (tab === "login") {
-    loginTab.classList.add("active")
-    signupTab.classList.remove("active")
-    loginForm.classList.add("active")
-    signupForm.classList.remove("active")
-  } else {
-    signupTab.classList.add("active")
-    loginTab.classList.remove("active")
-    signupForm.classList.add("active")
-    loginForm.classList.remove("active")
+  // Availability toggle for mentors
+  const availabilityToggle = document.getElementById("availabilityToggle");
+  if(availabilityToggle) {
+    availabilityToggle.addEventListener("change", toggleAvailability);
   }
-}
-
-function handleLogin(e) {
-  e.preventDefault()
-  const formData = new FormData(e.target)
-  const email = formData.get("email")
-  const password = formData.get("password")
-
-  // Simulate login (in real app, make API call)
-  if (email && password) {
-    // Create mock user based on email
-    currentUser = {
-      id: Date.now(),
-      email: email,
-      name: email
-        .split("@")[0]
-        .replace(".", " ")
-        .replace(/\b\w/g, (l) => l.toUpperCase()),
-      role: email.includes("mentor") ? "Mentor" : "Mentee",
-      department: "CS",
-      year: "3rd",
-    }
-
-    localStorage.setItem("currentUser", JSON.stringify(currentUser))
-    showToast("Login successful!")
-    showDashboard()
-  }
-}
-
-function handleSignup(e) {
-  e.preventDefault()
-  const formData = new FormData(e.target)
-
-  // Create user object
-  currentUser = {
-    id: Date.now(),
-    name: formData.get("fullName"),
-    email: formData.get("email"),
-    department: formData.get("department"),
-    year: formData.get("academicYear"),
-    role: formData.get("role"),
-    bio: formData.get("bio"),
-    linkedin: formData.get("linkedinUrl"),
-    whatsapp: formData.get("whatsappContact"),
-  }
-
-  localStorage.setItem("currentUser", JSON.stringify(currentUser))
-  showToast("Account created successfully!")
-  showDashboard()
-}
-
-function handleLogout() {
-  currentUser = null
-  localStorage.removeItem("currentUser")
-  showAuthPage()
-  showToast("Logged out successfully!")
-}
-
-function showAuthPage() {
-  document.getElementById("authPage").style.display = "flex"
-  document.getElementById("menteeDashboard").style.display = "none"
-  document.getElementById("mentorDashboard").style.display = "none"
-  document.getElementById("navbar").style.display = "none"
 }
 
 function showDashboard() {
-  document.getElementById("authPage").style.display = "none"
-  document.getElementById("navbar").style.display = "block"
+  document.getElementById("navbar").style.display = "block";
+  document.getElementById("menteeDashboard").style.display = "none";
+  document.getElementById("mentorDashboard").style.display = "none";
 
+  // Display dashboards based on the user's role from the backend
   if (currentUser.role === "Mentor" || currentUser.role === "Both") {
-    showMentorDashboard()
-  } else {
-    showMenteeDashboard()
+    showMentorDashboard();
+  }
+  if (currentUser.role === "Mentee" || currentUser.role === "Both") {
+    showMenteeDashboard();
   }
 }
 
 function showMenteeDashboard() {
-  document.getElementById("menteeDashboard").style.display = "block"
-  document.getElementById("mentorDashboard").style.display = "none"
-  renderMentors()
+  const menteeDashboard = document.getElementById("menteeDashboard");
+  if(menteeDashboard) {
+    menteeDashboard.style.display = "block";
+    renderMentors(); // Render with mock data
+  }
 }
 
 function showMentorDashboard() {
-  document.getElementById("mentorDashboard").style.display = "block"
-  document.getElementById("menteeDashboard").style.display = "none"
-  renderMentorshipRequests()
+  const mentorDashboard = document.getElementById("mentorDashboard");
+  if(mentorDashboard) {
+    mentorDashboard.style.display = "block";
+    renderMentorshipRequests(); // Render with mock data
+  }
 }
 
 function renderMentors() {
-  const mentorsGrid = document.getElementById("mentorsGrid")
+  const mentorsGrid = document.getElementById("mentorsGrid");
+  if (!mentorsGrid) return;
 
-  if (mentors.length === 0) {
-    mentorsGrid.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-user-friends"></i>
-                <h3>No mentors found</h3>
-                <p>Try adjusting your search filters to find mentors.</p>
-            </div>
-        `
-    return
+  const mentorsToRender = sampleMentors.filter(mentor => mentor.id !== currentUser.id);
+
+  if (mentorsToRender.length === 0) {
+    mentorsGrid.innerHTML = `<div class="empty-state"><h3>No other mentors found</h3></div>`;
+    return;
   }
 
-  mentorsGrid.innerHTML = mentors
-    .map(
-      (mentor) => `
-        <div class="mentor-card" data-department="${mentor.department}" data-year="${mentor.year}">
-            <div class="mentor-header">
-                <div class="mentor-avatar">
-                    ${mentor.name.charAt(0)}
-                </div>
-                <div class="mentor-info">
-                    <h3>${mentor.name}</h3>
-                    <p>${mentor.year} Year • ${mentor.department}</p>
-                </div>
+  mentorsGrid.innerHTML = mentorsToRender.map(mentor => `
+    <div class="mentor-card" data-department="${mentor.department}" data-year="${mentor.year}">
+        <div class="mentor-header">
+            <div class="mentor-avatar">
+                ${mentor.name.charAt(0)}
             </div>
-            
-            <div class="mentor-bio">
-                ${mentor.bio}
+            <div class="mentor-info">
+                <h3>${mentor.name}</h3>
+                <p>${mentor.year} Year • ${mentor.department}</p>
             </div>
-            
-            <div class="mentor-skills">
-                ${mentor.skills.map((skill) => `<span class="skill-tag">${skill}</span>`).join("")}
-            </div>
-            
-            <div class="mentor-contacts">
-                ${mentor.linkedin ? `<a href="${mentor.linkedin}" target="_blank" class="contact-btn contact-linkedin"><i class="fab fa-linkedin"></i> LinkedIn</a>` : ""}
-                <a href="mailto:${mentor.email}" class="contact-btn contact-email"><i class="fas fa-envelope"></i> Email</a>
-                ${mentor.whatsapp ? `<a href="https://wa.me/${mentor.whatsapp.replace(/\D/g, "")}" target="_blank" class="contact-btn contact-whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp</a>` : ""}
-            </div>
-            
-            <button class="btn btn-primary" onclick="openRequestModal(${mentor.id})">
-                <i class="fas fa-paper-plane"></i> Request Mentorship
-            </button>
         </div>
-    `,
-    )
-    .join("")
+        
+        <div class="mentor-bio">
+            ${mentor.bio}
+        </div>
+        
+        <div class="mentor-skills">
+            ${mentor.skills.map((skill) => `<span class="skill-tag">${skill}</span>`).join("")}
+        </div>
+        
+        <div class="mentor-contacts">
+            ${mentor.linkedin ? `<a href="${mentor.linkedin}" target="_blank" class="contact-btn contact-linkedin"><i class="fab fa-linkedin"></i> LinkedIn</a>` : ""}
+            <a href="mailto:${mentor.email}" class="contact-btn contact-email"><i class="fas fa-envelope"></i> Email</a>
+            ${mentor.whatsapp ? `<a href="https://wa.me/${mentor.whatsapp.replace(/\D/g, "")}" target="_blank" class="contact-btn contact-whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp</a>` : ""}
+        </div>
+        
+        <button class="btn btn-primary" onclick="openRequestModal(${mentor.id})">
+            <i class="fas fa-paper-plane"></i> Request Mentorship
+        </button>
+    </div>
+  `).join("");
 }
 
 function renderMentorshipRequests() {
-  const requestsContainer = document.getElementById("requestsContainer")
+  const requestsContainer = document.getElementById("requestsContainer");
+  if (!requestsContainer) return;
 
-  if (mentorshipRequests.length === 0) {
-    requestsContainer.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-inbox"></i>
-                <h3>No mentorship requests</h3>
-                <p>When students request your mentorship, they'll appear here.</p>
-            </div>
-        `
-    return
+  if (sampleRequests.length === 0) {
+    requestsContainer.innerHTML = `<div class="empty-state"><h3>No mentorship requests</h3></div>`;
+    return;
   }
 
-  requestsContainer.innerHTML = mentorshipRequests
-    .map(
-      (request) => `
-        <div class="request-card">
-            <div class="request-header">
-                <div class="request-info">
-                    <h3>${request.menteeName}</h3>
-                    <p>${request.menteeYear} Year • ${request.menteeDepartment}</p>
-                    <p><strong>Preferred Time:</strong> ${request.preferredTime}</p>
-                </div>
-                <span class="request-status status-${request.status}">
-                    ${request.status.charAt(0).toUpperCase() + request.status.slice(1)}
-                </span>
+  requestsContainer.innerHTML = sampleRequests.map(request => `
+    <div class="request-card">
+        <div class="request-header">
+            <div class="request-info">
+                <h3>${request.menteeName}</h3>
+                <p>${request.menteeYear} Year • ${request.menteeDepartment}</p>
             </div>
-            
-            <div class="request-reason">
-                <strong>Why they want mentorship:</strong><br>
-                ${request.reason}
-            </div>
-            
-            <div class="request-help-types">
-                ${request.helpTypes.map((type) => `<span class="help-type-tag">${type}</span>`).join("")}
-            </div>
-            
-            ${
-              request.status === "pending"
-                ? `
-                <div class="request-actions">
-                    <button class="btn btn-success" onclick="handleRequestAction(${request.id}, 'accepted')">
-                        <i class="fas fa-check"></i> Accept
-                    </button>
-                    <button class="btn btn-danger" onclick="handleRequestAction(${request.id}, 'rejected')">
-                        <i class="fas fa-times"></i> Reject
-                    </button>
-                </div>
-            `
-                : ""
-            }
+            <span class="request-status status-${request.status}">${request.status}</span>
         </div>
-    `,
-    )
-    .join("")
+        <div class="request-reason"><strong>Reason:</strong><br>${request.reason}</div>
+        <div class="request-help-types">${request.helpTypes.map(type => `<span class="help-type-tag">${type}</span>`).join("")}</div>
+        ${request.status === "pending" ? `
+            <div class="request-actions">
+                <button class="btn btn-success" onclick="handleRequestAction(${request.id}, 'accepted')"><i class="fas fa-check"></i> Accept</button>
+                <button class="btn btn-danger" onclick="handleRequestAction(${request.id}, 'rejected')"><i class="fas fa-times"></i> Reject</button>
+            </div>` : ""
+        }
+    </div>
+  `).join("");
 }
 
 function filterMentors() {
-  const searchTerm = document.getElementById("mentorSearch").value.toLowerCase()
-  const departmentFilter = document.getElementById("departmentFilter").value
-  const yearFilter = document.getElementById("yearFilter").value
+  const searchTerm = document.getElementById("mentorSearch").value.toLowerCase();
+  const departmentFilter = document.getElementById("departmentFilter").value;
+  const yearFilter = document.getElementById("yearFilter").value;
+  const mentorCards = document.querySelectorAll(".mentor-card");
 
-  const mentorCards = document.querySelectorAll(".mentor-card")
+  mentorCards.forEach(card => {
+    const name = card.querySelector("h3").textContent.toLowerCase();
+    const skills = Array.from(card.querySelectorAll(".skill-tag")).map(tag => tag.textContent.toLowerCase()).join(" ");
+    const department = card.dataset.department;
+    const year = card.dataset.year;
 
-  mentorCards.forEach((card) => {
-    const mentorName = card.querySelector("h3").textContent.toLowerCase()
-    const mentorSkills = Array.from(card.querySelectorAll(".skill-tag"))
-      .map((tag) => tag.textContent.toLowerCase())
-      .join(" ")
-    const mentorDepartment = card.dataset.department
-    const mentorYear = card.dataset.year
+    const matchesSearch = name.includes(searchTerm) || skills.includes(searchTerm);
+    const matchesDept = !departmentFilter || department === departmentFilter;
+    const matchesYear = !yearFilter || year === yearFilter;
 
-    const matchesSearch = mentorName.includes(searchTerm) || mentorSkills.includes(searchTerm)
-    const matchesDepartment = !departmentFilter || mentorDepartment === departmentFilter
-    const matchesYear = !yearFilter || mentorYear === yearFilter
-
-    if (matchesSearch && matchesDepartment && matchesYear) {
-      card.style.display = "block"
-    } else {
-      card.style.display = "none"
-    }
-  })
+    card.style.display = (matchesSearch && matchesDept && matchesYear) ? "block" : "none";
+  });
 }
 
 function openRequestModal(mentorId) {
-  document.getElementById("mentorId").value = mentorId
-  document.getElementById("requestModal").classList.add("active")
-  document.body.style.overflow = "hidden"
+  document.getElementById("mentorId").value = mentorId;
+  document.getElementById("requestModal").classList.add("active");
 }
 
 function closeModal() {
-  document.getElementById("requestModal").classList.remove("active")
-  document.body.style.overflow = "auto"
-  document.getElementById("requestForm").reset()
+  document.getElementById("requestModal").classList.remove("active");
+  document.getElementById("requestForm").reset();
 }
 
 function handleMentorshipRequest(e) {
-  e.preventDefault()
-  const formData = new FormData(e.target)
-  const mentorId = Number.parseInt(formData.get("mentorId"))
-  const reason = formData.get("reason")
-  const helpTypes = formData.getAll("helpType")
-  const preferredTime = formData.get("preferredTime")
-
-  // Create new request
-  const newRequest = {
-    id: Date.now(),
-    mentorId: mentorId,
-    menteeId: currentUser.id,
-    menteeName: currentUser.name,
-    menteeDepartment: currentUser.department,
-    menteeYear: currentUser.year,
-    menteeBio: currentUser.bio || "",
-    reason: reason,
-    helpTypes: helpTypes,
-    preferredTime: preferredTime,
-    status: "pending",
-    requestDate: new Date().toISOString().split("T")[0],
-  }
-
-  mentorshipRequests.push(newRequest)
-  closeModal()
-  showToast("Mentorship request sent successfully!")
+  e.preventDefault();
+  closeModal();
+  showToast("Mentorship request sent successfully! (Demo)");
 }
 
 function handleRequestAction(requestId, action) {
-  const request = mentorshipRequests.find((r) => r.id === requestId)
+  const request = sampleRequests.find(r => r.id === requestId);
   if (request) {
-    request.status = action
-    renderMentorshipRequests()
-    showToast(`Request ${action} successfully!`)
+    request.status = action;
+    renderMentorshipRequests();
+    showToast(`Request ${action} successfully! (Demo)`);
   }
 }
 
 function toggleAvailability() {
-  const toggle = document.getElementById("availabilityToggle")
-  const isAvailable = toggle.checked
-
-  // Update mentor availability in the system
-  if (currentUser) {
-    currentUser.availability = isAvailable
-    localStorage.setItem("currentUser", JSON.stringify(currentUser))
-  }
-
-  showToast(isAvailable ? "You are now accepting new mentees" : "You are not accepting new mentees")
+  showToast("Availability updated! (Demo)");
 }
 
 function showToast(message) {
-  const toast = document.getElementById("successToast")
-  const toastMessage = document.getElementById("toastMessage")
+  const toast = document.getElementById("successToast");
+  const toastMessage = document.getElementById("toastMessage");
+  if (!toast || !toastMessage) return;
 
-  toastMessage.textContent = message
-  toast.classList.add("show")
-
-  setTimeout(() => {
-    toast.classList.remove("show")
-  }, 3000)
+  toastMessage.textContent = message;
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 3000);
 }
-
-// Utility function to get initials from name
-function getInitials(name) {
-  return name
-    .split(" ")
-    .map((word) => word.charAt(0))
-    .join("")
-    .toUpperCase()
-}
-
-// Utility function to format date
-function formatDate(dateString) {
-  const date = new Date(dateString)
-  return date.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  })
-}
-
-// Add some sample interaction animations
-document.addEventListener("click", (e) => {
-  if (e.target.classList.contains("btn")) {
-    e.target.style.transform = "scale(0.95)"
-    setTimeout(() => {
-      e.target.style.transform = ""
-    }, 150)
-  }
-})
-
-// Add loading states for better UX
-function showLoading(element) {
-  element.classList.add("loading")
-}
-
-function hideLoading(element) {
-  element.classList.remove("loading")
-}
-
-// Keyboard shortcuts
-document.addEventListener("keydown", (e) => {
-  // Escape key to close modal
-  if (e.key === "Escape") {
-    closeModal()
-  }
-
-  // Ctrl/Cmd + K to focus search
-  if ((e.ctrlKey || e.metaKey) && e.key === "k") {
-    e.preventDefault()
-    const searchInput = document.getElementById("mentorSearch")
-    if (searchInput && searchInput.offsetParent !== null) {
-      searchInput.focus()
-    }
-  }
-})
-
-// Add smooth scrolling for better UX
-document.documentElement.style.scrollBehavior = "smooth"
-
-// Initialize tooltips and other interactive elements
-function initializeInteractiveElements() {
-  // Add hover effects to cards
-  const cards = document.querySelectorAll(".mentor-card, .request-card")
-  cards.forEach((card) => {
-    card.addEventListener("mouseenter", function () {
-      this.style.transform = "translateY(-5px)"
-    })
-
-    card.addEventListener("mouseleave", function () {
-      this.style.transform = ""
-    })
-  })
-}
-
-// Call initialization after DOM is loaded
-document.addEventListener("DOMContentLoaded", initializeInteractiveElements)
