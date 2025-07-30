@@ -99,6 +99,30 @@ def dashboard():
     return render_template("index.html", user_data=user_data)
 
 
+@app.route("/profile", methods=['GET', 'POST'])
+@login_required
+def profile():
+    if request.method == 'POST':
+        # Get the user from the database
+        user_to_update = User.query.get(current_user.id)
+
+        # Update fields from the form
+        user_to_update.name = request.form.get('fullName')
+        user_to_update.department = request.form.get('department')
+        user_to_update.year = request.form.get('academicYear')
+        user_to_update.bio = request.form.get('bio')
+        user_to_update.linkedin = request.form.get('linkedinUrl')
+        user_to_update.whatsapp = request.form.get('whatsappContact')
+
+        # Commit changes to the database
+        db.session.commit()
+
+        flash('Your profile has been updated successfully!', 'success')
+        return redirect('/profile')
+
+    return render_template("profile.html")
+
+
 @app.route("/logout")
 def logout():
     logout_user()

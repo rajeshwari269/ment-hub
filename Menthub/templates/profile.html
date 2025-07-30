@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - MentorConnect</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navigation Header -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-graduation-cap"></i>
+                <span>MentorConnect</span>
+            </div>
+            <div class="nav-menu">
+                <a href="/dashboard" class="nav-btn">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/profile" class="nav-btn" style="background: #f0f0f0; color: #667eea;"> <!-- Active style -->
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+                <a href="/logout" class="nav-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page">
+        <div class="dashboard-container">
+            <div class="dashboard-header">
+                <h1><i class="fas fa-user-edit"></i> My Profile</h1>
+                <p>View and update your personal information.</p>
+            </div>
+
+            <!-- Flash messages for success/error -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="toast show"
+                style="background: #28a745; position: relative; top: 0; right: 0; margin: 0 auto 20px; display: flex; animation: none;">
+                <i class="fas fa-check-circle"></i>
+                <span>{{ message }}</span>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <div class="auth-container" style="max-width: 800px; margin: 0 auto; animation: none;">
+                <form method="POST" action="/profile">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fullName">Full Name</label>
+                            <input type="text" id="fullName" name="fullName" value="{{ current_user.name }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" value="{{ current_user.email }}" disabled>
+                            <small style="color: #666; font-size: 12px;">Email address cannot be changed.</small>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="department">Department</label>
+                            <select id="department" name="department" required>
+                                <option value="IT" {% if current_user.department=='IT' %}selected{% endif %}>Information
+                                    Technology</option>
+                                <option value="CS" {% if current_user.department=='CS' %}selected{% endif %}>Computer
+                                    Science</option>
+                                <option value="Mechanical" {% if current_user.department=='Mechanical' %}selected{%
+                                    endif %}>Mechanical Engineering</option>
+                                <option value="Electrical" {% if current_user.department=='Electrical' %}selected{%
+                                    endif %}>Electrical Engineering</option>
+                                <option value="Civil" {% if current_user.department=='Civil' %}selected{% endif %}>Civil
+                                    Engineering</option>
+                                <option value="Electronics" {% if current_user.department=='Electronics' %}selected{%
+                                    endif %}>Electronics Engineering</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="academicYear">Academic Year</label>
+                            <select id="academicYear" name="academicYear" required>
+                                <option value="1st" {% if current_user.year=='1st' %}selected{% endif %}>1st Year
+                                </option>
+                                <option value="2nd" {% if current_user.year=='2nd' %}selected{% endif %}>2nd Year
+                                </option>
+                                <option value="3rd" {% if current_user.year=='3rd' %}selected{% endif %}>3rd Year
+                                </option>
+                                <option value="4th" {% if current_user.year=='4th' %}selected{% endif %}>4th Year
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bio">Bio</label>
+                        <textarea id="bio" name="bio" rows="4"
+                            placeholder="Tell us about yourself...">{{ current_user.bio or '' }}</textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="linkedinUrl">LinkedIn URL</label>
+                            <input type="url" id="linkedinUrl" name="linkedinUrl"
+                                value="{{ current_user.linkedin or '' }}"
+                                placeholder="https://linkedin.com/in/yourprofile">
+                        </div>
+                        <div class="form-group">
+                            <label for="whatsappContact">WhatsApp Contact</label>
+                            <input type="tel" id="whatsappContact" name="whatsappContact"
+                                value="{{ current_user.whatsapp or '' }}" placeholder="+91 9876543210">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Update Profile</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

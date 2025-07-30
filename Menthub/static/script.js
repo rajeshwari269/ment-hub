@@ -154,6 +154,10 @@ function initializeApp() {
 function setupEventListeners() {
   // Navigation
   document.getElementById("dashboardBtn").addEventListener("click", showDashboard);
+  document.getElementById("profileBtn").addEventListener("click", (e) => {
+    e.preventDefault(); // Prevent default link behavior
+    window.location.href = '/profile'; // Navigate to profile page
+  });
   document.getElementById("logoutBtn").addEventListener("click", () => {
     // Redirect to the backend logout route
     window.location.href = '/logout';
