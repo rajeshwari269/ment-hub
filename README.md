@@ -35,33 +35,69 @@ Whether you're a first-year looking for advice or a final-year student ready to 
 
 ### 🛠️ Steps:
 
-# Step 1: Clone the repository
+**1. Clone the Repository**
+```bash
 git clone https://github.com/yourusername/menthub.git
 cd menthub
+```
 
-# Step 2: Create and activate virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+**2. Create and Activate Virtual Environment**
+```bash
+# For macOS/Linux
+python3 -m venv .venv
+source .venv/bin/activate
 
-# Step 3: Install dependencies
+# For Windows
+python -m venv .venv
+.venv\Scripts\activate
+```
+
+**3. Install Dependencies**
+```bash
 pip install -r requirements.txt
+```
 
-# Step 4: Set up PostgreSQL
-# Create a database named 'menthub_db' in PostgreSQL
-# Update your .env file with DB connection string
-# Example: postgresql://username:password@localhost/menthub_db
+**4. Set Up PostgreSQL Database**
+Log in to PostgreSQL and create the database for the application.
+```sql
+-- Log in to psql first
+sudo -u postgres psql
 
-# Step 5: Set environment variables
-Create a `.env` file in the root directory:
-FLASK_APP=app.py  
-FLASK_ENV=development  
-DATABASE_URL=your_postgres_connection_string  
+-- Then run this command inside the psql shell
+CREATE DATABASE "Menthub";
+```
 
-# Step 6: Run database migrations (if any)
-flask db upgrade
+**5. Set Up Environment Variables**
+Create a `.env` file in the root directory of the project. This file will store your secret keys and database connection string.
 
-# Step 7: Run the Flask app
+```properties
+# .env file
+SECRET_KEY='a_very_long_and_random_secret_key_here'
+SQLALCHEMY_DATABASE_URI='postgresql://postgres:your_password@localhost/Menthub'
+```
+*Replace `your_password` with your actual PostgreSQL password.*
+
+**6. Create Database Tables**
+Run the following commands in your terminal to create the necessary tables in your database from your models.
+```bash
+# Open the Flask shell
+flask shell
+
+# Inside the Python shell, run these commands
+>>> from app import db, app
+>>> with app.app_context():
+...     db.create_all()
+...
+>>> exit()
+```
+*This step is crucial to prevent "relation does not exist" errors.*
+
+**7. Run the Flask App**
+```bash
 flask run
+```
+The application should now be running on `http://127.0.0.1:5000/`.
+
 ---
 
 ## 📁 Project Structure
