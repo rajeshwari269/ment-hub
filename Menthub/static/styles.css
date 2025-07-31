@@ -59,6 +59,9 @@ body {
   cursor: pointer;
   transition: all 0.3s ease;
   color: #666;
+  text-decoration: none; /* Remove underline from links */
+  font-size: 14px; /* Ensure consistent font size */
+  font-weight: 500; /* Ensure consistent font weight */
 }
 
 .nav-btn:hover {
