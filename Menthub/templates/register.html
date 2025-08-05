@@ -64,7 +64,7 @@
                                 type="url" id="linkedinUrl" name="linkedinUrl"
                                 placeholder="https://linkedin.com/in/yourprofile"> </div>
                         <div class="form-group"> <label for="whatsappContact">WhatsApp Contact (Optional)</label> <input
-                                type="tel" id="whatsappContact" name="whatsappContact" placeholder="+91 9876543210">
+                                type="tel" id="whatsappContact" name="whatsappContact" placeholder="+91 9876543210" maxlength="14">
                         </div>
                     </div> <button type="submit" class="btn btn-primary">Sign Up</button>
                 </form>
@@ -73,6 +73,8 @@
             </div>
         </div>
     </div>
+
+    <script src="{{ url_for('static', filename='validation.js') }}"></script>
 </body>
 
 </html>
