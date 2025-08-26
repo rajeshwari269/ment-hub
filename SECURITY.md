@@ -1,4 +1,3 @@
-@ -0,0 +1,66 @@
 # 🔒 Security Policy
 
 Thank you for your interest in keeping the `Menthub` project secure. This document explains how to report security vulnerabilities, what to expect after reporting, and how we handle disclosures.
