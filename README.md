@@ -1,4 +1,4 @@
-# Menthub 👥📘
+# Menthub 👥
 
 **Menthub** is a full-stack web platform designed to bridge the gap between college students seeking guidance (*mentees*) and those offering support (*mentors*) — all within the same academic environment.
 
