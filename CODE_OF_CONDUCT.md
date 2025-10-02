@@ -75,11 +75,8 @@ Menthub isn’t just about code—it’s about building a mentorship-driven comm
 
 **📄 License & Attribution**
 
-This Code of Conduct is adapted from the [Contributor Covenant (v3.0)](https://www.contributor-covenant.org/version/3/0/code_of_conduct/) and modified for **Menthub under GirlScript Summer of Code 2025 guidelines**. 
+This Code of Conduct is adapted from the [Contributor Covenant (v3.0)](https://www.contributor-covenant.org/version/3/0/code_of_conduct/) and modified  Menthub  
 
 📌 Original work License: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
 
-✏️ Modifications:
-- Added mentorship-specific guidelines
-- Integrated GSSOC'25 participation policies
-- Customized enforcement procedures
+
