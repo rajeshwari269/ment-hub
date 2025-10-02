@@ -20,15 +20,6 @@ We grow stronger when we:
 
 ---
 
-**🧭 Where This Applies**
-
-All Menthub-affiliated spaces, including:
-- GitHub (PRs, issues, discussions)
-- Discord/Slack (community channels)
-- Social Media (project-related interactions)
-- GSSOC’25 Events (meetups, mentorship sessions)
-
----
 
 
 **🎯 Contributor Expectations**
