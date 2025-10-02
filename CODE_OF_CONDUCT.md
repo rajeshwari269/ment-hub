@@ -17,14 +17,6 @@ We grow stronger when we:
 
 ---
 
-**🚫 Not Tolerated**
-
-To maintain a healthy community, we prohibit:
-- ❌ Harassment: Offensive comments, DMs, or exclusionary behavior.
-- ❌ Discrimination: Bias based on gender, race, age, religion, or identity.
-- ❌ Plagiarism: Claiming others’ work as your own.
-- ❌ Spam/Self-Promo: Irrelevant links or unsolicited advertising.
-- ❌ Toxicity: Mocking, dismissiveness, or hostility.
 
 ---
 
@@ -38,24 +30,6 @@ All Menthub-affiliated spaces, including:
 
 ---
 
-**🛑 Reporting Violations**
-
-If you encounter misconduct, report confidentially to:
-- Menthub Project Admins
-- GSSOC Mentors
-
-All reports are reviewed promptly and discreetly.
-
----
-
-**⚖️ Consequences**
-
-Violations may result in:
-- 🟡 Warning: Private reminder of guidelines.
-- 🟠 Temporary Ban: Suspension from participation.
-- 🔴 Permanent Removal: For severe/repeated violations.
-
----
 
 **🎯 Contributor Expectations**
 
